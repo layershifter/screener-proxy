@@ -9,7 +9,6 @@
   "dependencies": {
     "@octokit/app": "^4.2.1",
     "@octokit/request": "^5.4.7",
-    "@octokit/rest": "^18.0.3",
     "@vercel/node": "^1.8.1",
     "typescript": "^3.9.7"
   },
