@@ -8,7 +8,9 @@ import { getInstallationToken } from "../util";
 const github: NowApiHandler = async (req, res) => {
   const accessToken = await getInstallationToken();
   const shouldProceed =
-    req.body.action === "opened" || req.body.action === "synchronize";
+    req.body.action === "opened" ||
+    req.body.action === "reopened" ||
+    req.body.action === "synchronize";
 
   if (shouldProceed) {
     const commitSHA = req.body.pull_request.head.sha;
