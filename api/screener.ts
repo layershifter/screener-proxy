@@ -20,8 +20,8 @@ const screener: NowApiHandler = async (req, res) => {
   const accessToken = await getInstallationToken();
   const body: ScreenerRequestBody = req.body;
 
-  const checkForCommit = await request(
-    "GET /repos/{owner}/{repo}/commits/{ref}/check-runs",
+  const checksForCommit = await request(
+    "GET /repos/:owner/:repo/commits/:ref/check-runs",
     {
       owner: OWNER,
       repo: REPO,
@@ -34,24 +34,26 @@ const screener: NowApiHandler = async (req, res) => {
       },
     }
   );
-  const screenerCheck = checkForCommit.data.check_runs.find(
-    (checkRun: any) => checkRun.app.id === APP_ID
+  const screenerCheck = checksForCommit.data.check_runs.find(
+    (checkRun) => checkRun.app.id === APP_ID
   );
 
-  await request("PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}", {
-    owner: OWNER,
-    repo: REPO,
-    check_run_id: screenerCheck.id,
-    conclusion: body.status === "success" ? "success" : "failure",
-    details_url: body.url,
-    name: CHECK_NAME,
-    headers: {
-      authorization: `token ${accessToken}`,
-    },
-    mediaType: {
-      previews: ["antiope", "machine-man"],
-    },
-  });
+  if (screenerCheck) {
+    await request("PATCH /repos/:owner/:repo/check-runs/:check_run_id", {
+      owner: OWNER,
+      repo: REPO,
+      check_run_id: screenerCheck.id,
+      conclusion: body.status === "success" ? "success" : "failure",
+      details_url: body.url,
+      name: CHECK_NAME,
+      headers: {
+        authorization: `token ${accessToken}`,
+      },
+      mediaType: {
+        previews: ["antiope", "machine-man"],
+      },
+    });
+  }
 
   res.end();
 };

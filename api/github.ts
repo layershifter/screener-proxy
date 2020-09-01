@@ -14,7 +14,7 @@ const github: NowApiHandler = async (req, res) => {
   if (shouldProceed) {
     const commitSHA = req.body.pull_request.head.sha;
 
-    await request("POST /repos/{owner}/{repo}/check-runs", {
+    await request("POST /repos/:owner/:repo/check-runs", {
       owner: OWNER,
       repo: REPO,
       name: CHECK_NAME,
