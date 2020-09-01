@@ -1,4 +1,3 @@
-import { App } from "@octokit/app";
 import { request } from "@octokit/request";
 import { NowApiHandler } from "@vercel/node";
 
