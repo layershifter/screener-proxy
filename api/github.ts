@@ -2,17 +2,21 @@ import { request } from "@octokit/request";
 import { NowApiHandler } from "@vercel/node";
 
 import { CHECK_NAME, OWNER, REPO } from "../config";
-import { getInstallationToken } from "../util";
+import { getInstallationToken, pino } from "../util";
 
 const github: NowApiHandler = async (req, res) => {
   const accessToken = await getInstallationToken();
+  const body = req.body;
+
   const shouldProceed =
-    req.body.action === "opened" ||
-    req.body.action === "reopened" ||
-    req.body.action === "synchronize";
+    body.action === "opened" ||
+    body.action === "reopened" ||
+    body.action === "synchronize";
 
   if (shouldProceed) {
-    const commitSHA = req.body.pull_request.head.sha;
+    const commitSHA = body.pull_request.head.sha;
+
+    pino.info({ body });
 
     await request("POST /repos/:owner/:repo/check-runs", {
       owner: OWNER,

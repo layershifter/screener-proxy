@@ -1,5 +1,6 @@
 import { App } from "@octokit/app";
 import { request } from "@octokit/request";
+import Pino from 'pino'
 
 import { APP_ID, OWNER, PRIVATE_KEY, REPO } from "./config";
 
@@ -22,3 +23,5 @@ export async function getInstallationToken(): Promise<string> {
     installationId: data.id,
   });
 }
+
+export const pino = Pino()

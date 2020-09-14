@@ -2,7 +2,7 @@ import { request } from "@octokit/request";
 import { NowApiHandler } from "@vercel/node";
 
 import { APP_ID, CHECK_NAME, OWNER, REPO } from "../config";
-import { getInstallationToken } from "../util";
+import { getInstallationToken, pino } from "../util";
 
 type ScreenerRequestBody = {
   id: string;
@@ -19,6 +19,8 @@ type ScreenerRequestBody = {
 const screener: NowApiHandler = async (req, res) => {
   const accessToken = await getInstallationToken();
   const body: ScreenerRequestBody = req.body;
+
+  pino.info({ body });
 
   const checksForCommit = await request(
     "GET /repos/:owner/:repo/commits/:ref/check-runs",

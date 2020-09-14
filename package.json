@@ -10,9 +10,11 @@
     "@octokit/app": "^4.2.1",
     "@octokit/request": "^5.4.7",
     "@vercel/node": "^1.8.1",
+    "pino": "^6.6.1",
     "typescript": "^3.9.7"
   },
   "devDependencies": {
+    "@types/pino": "^6.3.0",
     "prettier": "^2.0.5"
   }
 }
