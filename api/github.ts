@@ -4,25 +4,45 @@ import { NowApiHandler } from "@vercel/node";
 import { CHECK_NAME, OWNER, REPO } from "../config";
 import { getInstallationToken, pino } from "../util";
 
+type GithubRequestBody = {
+  action: string;
+  pull_request?: {
+    base: {
+      label: string;
+      ref: string;
+    };
+    head: {
+      sha: string;
+    };
+    number: number;
+    title: string;
+  };
+};
+
+const ALLOWED_BASES: string[] = ["master"];
+
 const github: NowApiHandler = async (req, res) => {
   const accessToken = await getInstallationToken();
-  const body = req.body;
+  const body: GithubRequestBody = req.body;
 
-  const shouldProceed =
+  const commitSHA = body.pull_request?.head.sha;
+  const targetBranch = body.pull_request?.base.ref;
+
+  const shouldProceedByActionType =
     body.action === "opened" ||
     body.action === "reopened" ||
     body.action === "synchronize";
+  const shouldProceedByTargetBranch =
+    targetBranch && ALLOWED_BASES.includes(targetBranch);
 
-  if (shouldProceed) {
-    const commitSHA = body.pull_request.head.sha;
-
+  if (shouldProceedByActionType && shouldProceedByTargetBranch) {
     pino.info({ body });
 
     await request("POST /repos/:owner/:repo/check-runs", {
       owner: OWNER,
       repo: REPO,
       name: CHECK_NAME,
-      head_sha: commitSHA,
+      head_sha: commitSHA as string,
       headers: {
         authorization: `token ${accessToken}`,
       },
